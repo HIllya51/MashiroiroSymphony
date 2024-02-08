@@ -59,18 +59,33 @@ void strReplace(std::string& str, const std::string& oldStr, const std::string& 
 }
 bool hookfun(winhook::hook_stack* s)
 {
+    static std::vector<std::string>saves;
     auto text = (char*)s->ecx;
     if (text == 0)return false;
     std::string utf8string = text;
+    
+    std::ofstream notrans;
+    notrans.open("log.txt", std::ios::app);
+    if (notrans.is_open()) {
+        notrans << utf8string << "\n";
+        notrans.close();
+    }
+    saves.push_back(text);
     if (all_ascii(text,strlen(text)))return false;
     
     if (namemap.find(utf8string) != namemap.end()) {
-        std::string res = namemap.at(utf8string);
-        auto cs = new char[res.size() + 1];
-        strcpy(cs, res.c_str());
-        s->ecx = (DWORD)cs;
-        //strcpy(text, res.c_str());
-        return true;
+        auto l = saves.size();
+        if (saves[l - 1 - 2] == std::string("vflag") || saves[l - 1 - 1] == std::string("text")) {
+            std::string res = namemap.at(utf8string);
+            auto cs = new char[res.size() + 1];
+            strcpy(cs, res.c_str());
+            s->ecx = (DWORD)cs;
+            //strcpy(text, res.c_str());
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     auto utf8save = utf8string; 
     strReplace(utf8save, "%51;", "\\-");
@@ -101,9 +116,9 @@ bool hookfun(winhook::hook_stack* s)
     }
     else {
         std::ofstream notrans;
-        notrans.open("notrans.txt", std::ios::app);
+        notrans.open("log.txt", std::ios::app);
         if (notrans.is_open()) {
-            notrans << utf8string << "\n";
+            notrans <<"?"<<utf8string << "\n";
             notrans <<"+"<< utf8save << "\n";
             notrans.close();
         }
