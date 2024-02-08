@@ -145,11 +145,20 @@ bool CreateFontIndirectWh(winhook::hook_stack* s) {
     auto lplf = (LOGFONTW*)s->stack[1];
     wcscpy(lplf->lfFaceName, L"微软雅黑");
     return true;
-} 
-
+}
+bool ok = false;
+bool CreateWindowExWH(winhook::hook_stack* s) {
+    if(s->stack[3])
+        if (wcsstr((wchar_t*)s->stack[3], L"ましろ色シンフォニー")) {
+            s->stack[3] = (DWORD)L"纯白交响曲 -Love is pure white- *Remake for FHD 汉化移植版 错误反馈：https://github.com/HIllya51/MashiroiroSymphony";
+            ok = true;
+        }
+    return true;
+}
 void hooks() {
     std::thread([]() {
 
+        winhook::hook_before((DWORD)CreateWindowExW, CreateWindowExWH);
         winhook::hook_before((UINT)CreateFontIndirectW, CreateFontIndirectWh);
         Sleep(4000);
         BYTE sig[] = { 0x55,0x8B,0xEC,0x83,0xEC,0x08,0x53,0x56,0x8B,0xF1,0x33,0xDB,0x8A,0x06,0x57,0x8B };
@@ -158,7 +167,7 @@ void hooks() {
         if (addr - (DWORD)(GetModuleHandle(0)) != 0x2180) {
             MessageBox(0, L"版本错误", L"", 0);
             return;
-        } 
+        }
         winhook::hook_before(addr, hookfun);
         }
     ).detach();

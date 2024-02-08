@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\Users\wcy\Documents\GitHub\maitchirusakura\patch;$(IncludePath)</IncludePath>
-    <OutDir>C:\Users\wcy\Documents\GitHub\LunaTextHook\builds\_x86</OutDir>
+    <OutDir>C:\Users\wcy\Downloads\mashiro_fhd</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
